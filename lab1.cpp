@@ -38,9 +38,9 @@ public:
         vel = 30.0f;
         pos[0] = 0.0f + w;
         pos[1] = yres / 2.0f;
-        r = 100;
-        ga = 120;
-        b = 220;
+        r = 1;
+        ga = 0;
+        b = 254;
     }
 } g;
 
@@ -155,6 +155,22 @@ void X11_wrapper::swapBuffers()
 
 void X11_wrapper::reshape_window(int width, int height)
 {
+    //faster or slower / bound check (redder or bluer / i dont want it getting red if its 9000000 pixels wide)
+    if (g.xres > width && width < 400)
+    {
+        if (g.r < 244 && g.r + 10 <= 244)
+            g.r += 10;
+        if (g.b > 0)
+            g.b--;   
+    }
+    else if (g.xres < width)
+    {
+        if (g.b < 255)   
+            g.b++;
+        if (g.r > 0)
+            g.r--;
+    }
+
 	//Window has been resized.
 	g.xres = width;
 	g.yres = height;
@@ -163,6 +179,7 @@ void X11_wrapper::reshape_window(int width, int height)
 	glMatrixMode(GL_PROJECTION); glLoadIdentity();
 	glMatrixMode(GL_MODELVIEW); glLoadIdentity();
 	glOrtho(0, g.xres, 0, g.yres, -1, 1);
+    
 }
 
 void X11_wrapper::check_resize(XEvent *e)
@@ -275,7 +292,7 @@ void render()
 	glColor3ub(g.r, g.ga, g.b);
 	glTranslatef(g.pos[0], g.pos[1], 0.0f);
 	glBegin(GL_QUADS);
-    // midsection of the boxes <--> ^ etc
+    // midsection of the edges <--> ^ etc
 		glVertex2f(-g.w, -g.w);
 		glVertex2f(-g.w,  g.w);
 		glVertex2f(g.w,  g.w);
