@@ -155,7 +155,18 @@ void X11_wrapper::swapBuffers()
 
 void X11_wrapper::reshape_window(int width, int height)
 {
-    //faster or slower / bound check (redder or bluer / i dont want it getting red if its 9000000 pixels wide)
+    //window check / blackout - is the window smaller than the box? black it out 
+    if ((g.w * 2) > width)
+    {
+        g.r = 0;
+        g.b = 0;
+    }
+    if ((g.w * 2) == width)
+    {
+        g.r = 249;
+    }
+
+    //faster or slower / bound check (redder or bluer / i dont want it getting red if its 9000000 pixels wide, woulnt make sense)
     if (g.xres > width && width < 400)
     {
         if (g.r < 244 && g.r + 10 <= 244)
